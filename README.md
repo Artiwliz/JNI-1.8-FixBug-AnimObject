@@ -8,10 +8,10 @@
 - แก้ไขบัคปุ่ม Dialog
 - ปลดล็อค AnimObject
 
-## Java
+## Launcher Java
 
-- สามารถใช้ Launcher ตัว SMART RP ได้เลย
-- บิ้ว JNI เสร็จนำ libsamp.so ไปใส่
+- สามารถใช้ Launcher ตัวแจกของ SMART RP ได้เลย
+- บิ้ว JNI เสร็จนำ libsamp.so ไปใส่และบิ้วใน Android Studio
 
 ## คำเตือน
 
