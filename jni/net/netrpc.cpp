@@ -505,7 +505,7 @@ void DialogWindow(RPCParameters *rpcParams)
 	uint8_t byteDialogStyle = 0;
 	uint8_t len;
 	char szBuff[4096+1];
-	char title[64 * 3 + 1], info[4096+1], button1[20+1], button2[20+1];
+	char title[64 * 3 + 1], info[4096 + 1], button1[40 + 1], button2[40 + 1];
 
 	RakNet::BitStream bsData((unsigned char *)Data,(iBitLength/8)+1,false);
 
