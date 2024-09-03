@@ -1,0 +1,4 @@
+/* Color Support for https://colorscheme.ru/color-converter.html (RGBA) */
+1. Исправил ReTexture bug (object.cpp | hooks.cpp)
+2. Написал поддержку анимации 'piss' (playerped.cpp)
+3. Написал поддержку анимации 'dance' (playerped.cpp)
