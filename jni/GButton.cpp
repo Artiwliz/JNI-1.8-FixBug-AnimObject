@@ -29,7 +29,7 @@ CGButton::~CGButton()
 void CGButton::LoadTextureButton()
 {
 	p_GButtonTexture = nullptr;
-	p_GButtonTexture = (RwTexture*)LoadTextureFromDB("samp", "gtexture");
+	p_GButtonTexture = (RwTexture*)LoadTextureFromDB("samp", "passenger");
 }
 
 void CGButton::RenderButton()
