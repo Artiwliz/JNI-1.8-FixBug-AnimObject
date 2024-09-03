@@ -699,7 +699,6 @@ bool CLocalPlayer::Spawn()
 	// voice
 	SpeakerList::Show();
     MicroIcon::Show();
-	g_pJavaWrapper->ShowButton();
 
 	pExtraKeyBoard->Show(true);
 

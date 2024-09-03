@@ -81,6 +81,21 @@ std::string CJavaWrapper::GetClipboardString()
 	return str;
 }
 
+void CJavaWrapper::CallLauncherActivity(int type)
+{
+	JNIEnv* env = GetEnv();
+
+	if (!env)
+	{
+		Log(OBFUSCATE("No env"));
+		return;
+	}
+
+	env->CallVoidMethod(activity, s_CallLauncherActivity, type);
+
+	EXCEPTION_CHECK(env);
+}
+
 void CJavaWrapper::ShowInputLayout()
 {
 	JNIEnv* env = GetEnv();
@@ -208,13 +223,73 @@ extern "C"
 
 		pEnv->ReleaseByteArrayElements(str, pMsg, JNI_ABORT);
 	}
+		JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_sendCommand(JNIEnv* pEnv, jobject thiz, jbyteArray str)
+	{
+		jboolean isCopy = true;
+
+		jbyte* pMsg = pEnv->GetByteArrayElements(str, &isCopy);
+		jsize length = pEnv->GetArrayLength(str);
+
+		std::string szStr((char*)pMsg, length);
+
+		if(pNetGame) {
+			pNetGame->SendChatCommand((char*)szStr.c_str());
+		}
+
+		pEnv->ReleaseByteArrayElements(str, pMsg, JNI_ABORT);
+	}
+	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_sendRPC(JNIEnv* pEnv, jobject thiz, jint type, jbyteArray str, jint action)
+	{
+		switch(type) {
+			case 1:
+				switch(action) {
+					case 398:
+						pNetGame->SendChatCommand("/redicon_1");
+						break;
+					case 1:
+						pNetGame->SendChatCommand("/redicon_2");
+						break;
+					case 2:
+						pNetGame->SendChatCommand("/redicon_3");
+						break;
+					case 4: 
+						pNetGame->SendChatCommand("/redicon_4");
+						break;
+					case 5: {
+						pNetGame->SendChatCommand("/redicon_5");
+						//pNetGame->SendChatCommand("/anim");	
+						break;
+					}
+					case 6:
+						pNetGame->SendChatCommand("/redicon_6");
+						break;
+					case 7:
+						pNetGame->SendChatCommand("/car");
+						break;
+					case 8:
+						pNetGame->SendChatCommand("/");		
+						break;		
+				}
+			case 2:
+				switch(action) {
+					case 0:
+						//pNetGame = new CNetGame(cryptor::create("194.169.160.244", 20).decrypt(), atoi(cryptor::create("7777", 4).decrypt()), pSettings->GetReadOnly().szNickName, pSettings->GetReadOnly().szPassword);
+						//pSettings->GetWrite().last_server = 0;
+						break;
+				}
+		}
+		
+	}
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_togglePlayer(JNIEnv* pEnv, jobject thiz, jint toggle) {
 		if(toggle)
 			pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable(false);
 		else
 			pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed()->TogglePlayerControllable(true);
 	}
-
+	/*JNIEXPORT jint JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_getLastServer(JNIEnv* pEnv, jobject thiz)
+	{
+		return (jint)pSettings->GetReadOnly().last_server;
+	}*/
 	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_onEventBackPressed(JNIEnv* pEnv, jobject thiz)
 	{
 		if (pKeyBoard)
@@ -284,10 +359,12 @@ extern "C"
 			if(!b)
 			{
 				*(uint8_t*)(g_libGTASA+0x7165E8) = 1;
+				g_pJavaWrapper->HideHud();
 			}
 			else
 			{
 				*(uint8_t*)(g_libGTASA+0x7165E8) = 0;
+				g_pJavaWrapper->ShowHud();
 			}
 		}
 	}
@@ -718,13 +795,30 @@ extern "C"
 
 		return color;
 	}
+}
 
-	JNIEXPORT void JNICALL Java_com_nvidia_devtech_NvEventQueueActivity_sendbutton(JNIEnv* pEnv, jobject thiz, jint key_id)
+void CJavaWrapper::ShowHud()
+{
+    JNIEnv* env = GetEnv();
+
+	if (!env)
 	{
-		char cmd[20];
-		sprintf(cmd, "/meta%d", key_id);
-		pNetGame->SendChatCommand(cmd);
+		Log("No env");
+		return;
 	}
+    env->CallVoidMethod(this->activity, this->s_showHud);
+}
+
+void CJavaWrapper::HideHud()
+{
+    JNIEnv* env = GetEnv();
+
+	if (!env)
+	{
+		Log("No env");
+		return;
+	}
+    env->CallVoidMethod(this->activity, this->s_hideHud);
 }
 
 void CJavaWrapper::SetPauseState(bool a1)
@@ -737,6 +831,19 @@ void CJavaWrapper::SetPauseState(bool a1)
 		return;
 	}
     env->CallVoidMethod(this->activity, this->s_setPauseState, a1);
+}
+
+void CJavaWrapper::UpdateHudInfo(int health, int armour, int hunger, int weaponid, int ammo, int ammoinclip, int money, int wanted, int score)
+{
+	JNIEnv* env = GetEnv();
+
+	if (!env)
+	{
+		Log("No env");
+		return;
+	}
+
+	env->CallVoidMethod(this->activity, this->s_updateHudInfo, health, armour, hunger, weaponid, ammo, ammoinclip, money, wanted, score);
 }
 
 void CJavaWrapper::ShowTabWindow()
@@ -809,31 +916,32 @@ void CJavaWrapper::UpdateSpeedInfo(int speed, int fuel, int hp, int mileage, int
 	env->CallVoidMethod(this->activity, this->s_updateSpeedInfo, speed, fuel, hp, mileage, engine, light, belt, lock);
 }
 
-void CJavaWrapper::ShowButton() {
+void CJavaWrapper::ShowWelcome(bool a) {
 
+    JNIEnv* env = GetEnv();
+
+	if (!env)
+	{
+		Log("No env");
+		return;
+	}
+    env->CallVoidMethod(this->activity, this->s_showWelcome, a);
+}
+
+
+void CJavaWrapper::ShowMenu() 
+{
 	JNIEnv* env = GetEnv();
 
 	if (!env)
 	{
 		Log("No env");
-		return; 
+		return;
 	}
 
-	env->CallVoidMethod(this->activity, this->s_showButton);
+	env->CallVoidMethod(this->activity, this->s_showMenu);
 }
 
-void CJavaWrapper::HideButton() {
-
-	JNIEnv* env = GetEnv();
-
-	if (!env)
-	{
-		Log("No env");
-		return; 
-	}
-
-	env->CallVoidMethod(this->activity, this->s_hideButton);
-}
 
 
 CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
@@ -846,6 +954,8 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 		Log(OBFUSCATE("nvEventClass null"));
 		return;
 	}
+
+	//s_CallLauncherActivity = env->GetMethodID(nvEventClass, OBFUSCATE("callLauncherActivity"), OBFUSCATE("(I)V"));
 	s_GetClipboardText = env->GetMethodID(nvEventClass, OBFUSCATE("getClipboardText"), OBFUSCATE("()[B"));
 
 	s_ShowInputLayout = env->GetMethodID(nvEventClass, OBFUSCATE("showInputLayout"), OBFUSCATE("()V"));
@@ -855,15 +965,30 @@ CJavaWrapper::CJavaWrapper(JNIEnv* env, jobject activity)
 	s_SetUseFullScreen = env->GetMethodID(nvEventClass, OBFUSCATE("setUseFullscreen"), OBFUSCATE("(I)V"));
 	
 	s_MakeDialog = env->GetMethodID(nvEventClass, OBFUSCATE("showDialog"),OBFUSCATE("(IILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"));
+	    
+	s_updateHudInfo = env->GetMethodID(nvEventClass, OBFUSCATE("updateHudInfo"), OBFUSCATE("(IIIIIIIII)V"));
+    s_showHud = env->GetMethodID(nvEventClass, OBFUSCATE("showHud"), OBFUSCATE("()V"));
+    s_hideHud = env->GetMethodID(nvEventClass, OBFUSCATE("hideHud"), OBFUSCATE("()V"));
 	
 	s_updateSpeedInfo = env->GetMethodID(nvEventClass, OBFUSCATE("updateSpeedInfo"), OBFUSCATE("(IIIIIIII)V"));
     s_showSpeed = env->GetMethodID(nvEventClass, OBFUSCATE("showSpeed"), OBFUSCATE("()V"));
     s_hideSpeed = env->GetMethodID(nvEventClass, OBFUSCATE("hideSpeed"), OBFUSCATE("()V"));
+	
+	
 	s_showTabWindow = env->GetMethodID(nvEventClass, OBFUSCATE("showTabWindow"), OBFUSCATE("()V"));	
-	s_setTabStat = env->GetMethodID(nvEventClass, OBFUSCATE("setTabStat"), OBFUSCATE("(ILjava/lang/String;II)V"));	
+	s_setTabStat = env->GetMethodID(nvEventClass, OBFUSCATE("setTabStat"), OBFUSCATE("(ILjava/lang/String;II)V"));
+	
+	s_showMenu = env->GetMethodID(nvEventClass, OBFUSCATE("showMenu"), OBFUSCATE("()V"));
+	
+	//s_updateSplash = env->GetMethodID(nvEventClass, OBFUSCATE("updateSplash"), OBFUSCATE("(I)V"));
+//	s_showSplash = env->GetMethodID(nvEventClass, OBFUSCATE("showSplash"), OBFUSCATE("()V"));
+	
+	s_showWelcome = env->GetMethodID(nvEventClass, OBFUSCATE("showWelcome"), OBFUSCATE("(Z)V"));
+	
+//	s_showNotification = env->GetMethodID(nvEventClass, OBFUSCATE("showNotification"),OBFUSCATE("(ILjava/lang/String;ILjava/lang/String;Ljava/lang/String;)V"));
+	
+	
 	s_setPauseState = env->GetMethodID(nvEventClass, OBFUSCATE("setPauseState"), OBFUSCATE("(Z)V"));
-	s_showButton = env->GetMethodID(nvEventClass, "showButtonkey", "()V");
-	s_hideButton = env->GetMethodID(nvEventClass, "hideButtonkey", "()V");
 
 	env->DeleteLocalRef(nvEventClass);
 }
