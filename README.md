@@ -15,4 +15,4 @@
 
 ## คำเตือน
 
-- ห้ามนำโค้ดที่เป็นของฟรีใน โปรเจคนี้ไปขายหรือรับแก้บัคต่างๆ พบเห็นสามารถ แจ้งได้ที่ [SAMP DEV - Community TH]([https://www.multitheftauto.com/](https://discord.gg/bH7jvP8SJj))
+- ห้ามนำโค้ดที่เป็นของฟรีใน โปรเจคนี้ไปขายหรือรับแก้บัคต่างๆ พบเห็นสามารถ แจ้งได้ที่ [SAMP DEV - Community TH](https://discord.gg/bH7jvP8SJj)
