@@ -6,7 +6,7 @@
 ปลดล็อค AnimObject
 
 ## Java
-สามารถใช้ Launcher ร่วมกับ SMART RP ได้เลย
+สามารถใช้ Launcher ตัว SMART RP ได้เลย
 บิ้ว JNI เสร็จนำ libsamp.so ไปใส่
 
 ## คำเตือน
