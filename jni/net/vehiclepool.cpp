@@ -108,7 +108,7 @@ void CVehiclePool::Process()
 				{
 					if (pVehicle->IsAdded())
 					{
-						pVehicle->Remove();
+						//pVehicle->Remove();
 					}
 					
 					if (m_bIsMarker[x])
