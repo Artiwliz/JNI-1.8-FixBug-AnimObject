@@ -912,35 +912,6 @@ ATOMIC_MODEL* CModelInfo_AddAtomicModel_hook(int id)
 	return model;
 }
 
-/* ====================================================== */
-typedef struct _VEHICLE_MODEL
-{
-	uintptr_t 	vtable;
-	uint8_t		data[932];
-} VEHICLE_MODEL; // SIZE = 936
-
-VEHICLE_MODEL VehicleModels[370];
-int VehicleModelsCount = 0;
-
-VEHICLE_MODEL* (*CModelInfo_AddVehicleModel)(int id);
-VEHICLE_MODEL* CModelInfo_AddVehicleModel_hook(int id)
-{
-	VEHICLE_MODEL* model = &VehicleModels[VehicleModelsCount];
-	memset(model, 0, sizeof(VEHICLE_MODEL));
-
-	((void(*)(void* thiz))(SA_ADDR(0x337AA0 + 1)))((void*)model); // CVehicleModelInfo::CVehicleModelInfo();
-
-	model->vtable = (uintptr_t)(SA_ADDR(0x5C6EE0));			// assign CVehicleModelInfo vmt
-
-	((uintptr_t(*)(VEHICLE_MODEL*))(*(void**)(model->vtable + 0x1C)))(model); // CVehicleModelInfo::Initialise()
-
-	*(VEHICLE_MODEL * *)(SA_ADDR(0x87BF48 + (id * 4))) = model; // CModelInfo::ms_modelInfoPtrs
-
-	VehicleModelsCount++;
-	return model;
-}
-/* ====================================================== */
-
 void(*CHud__DrawScriptText)(uintptr_t, uint8_t);
 
 float g_fMicrophoneButtonPosX;
@@ -3023,7 +2994,6 @@ void InstallHooks()
 	installHook(SA_ADDR(0x336268), (uintptr_t) CModelInfo_AddAtomicModel_hook, (uintptr_t *) &CModelInfo_AddAtomicModel);
 	installHook(SA_ADDR(0x567964), (uintptr_t) CWeapon_FireInstantHit_hook, (uintptr_t *) &CWeapon_FireInstantHit);
 	installHook(SA_ADDR(0x56668C), (uintptr_t) CWeapon__FireSniper_hook, (uintptr_t *) &CWeapon__FireSniper);
-	installHook(SA_ADDR(0x336618), (uintptr_t) CModelInfo_AddVehicleModel_hook, (uintptr_t *) &CModelInfo_AddVehicleModel); // dangerous
 
 	installHook(SA_ADDR(0x33DA5C), (uintptr_t) CAnimManager__UncompressAnimation_hook, (uintptr_t *) &CAnimManager__UncompressAnimation);
 	installHook(SA_ADDR(0x531118), (uintptr_t) CCustomRoadsignMgr__RenderRoadsignAtomic_hook, (uintptr_t *) &CCustomRoadsignMgr__RenderRoadsignAtomic);
