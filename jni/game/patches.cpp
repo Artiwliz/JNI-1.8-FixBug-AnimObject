@@ -434,6 +434,8 @@ void ApplyPatches()
 	// Prevent cheats processing
 	makeNOP(g_libGTASA + 0x3987BA, 2);
 
+	WriteMemory(g_libGTASA + 0x2F81BC, (uintptr_t)"\x95\xF8\x81\x48", 4);
+
 	unProtect(SA_ADDR(0x4C8816));
 	makeNOP(SA_ADDR(0x4C8816), 2); //CTaskSimpleHoldEntity = LDRB R3, [R5,#0x1D] (ขึ้นรถแล้ว Crash AnimationId,AssocGroupId ไม่เจอบางครั้ง)
 	unProtect(SA_ADDR(0x4C881E));
