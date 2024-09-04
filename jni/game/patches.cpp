@@ -77,7 +77,7 @@ int test_pointersLibArray[4000];
 
 void ApplyPatches_level0()
 {
-	PLAYERS_REALLOC = ((char* (*)(uint32_t))(g_libGTASA + 0x179B40))(0x404 * 120 * sizeof(char));
+	PLAYERS_REALLOC = ((char* (*)(uint32_t))(g_libGTASA + 0x179B40))(404 * 120 * sizeof(char));
 	memset(PLAYERS_REALLOC, 0, 404 * 120);
 	unProtect(g_libGTASA + 0x5D021C);
 	*(char**)(g_libGTASA + 0x5D021C) = PLAYERS_REALLOC;
