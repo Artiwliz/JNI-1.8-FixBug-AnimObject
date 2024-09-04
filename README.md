@@ -16,6 +16,9 @@ SAMP MOBILE (GTA SA 1.08) ปล่อย Open Source ให้เอาไป�
 - แก้ไขบัคปุ่ม Dialog
 - แก้ไขปุ่ม GButton
 - แก้ไขบัค CycleWeapon
+- ลดการทำงาน CWorld::Players ไม่ให้หนักหน่วง
+- แก้ไข Crash CRunningScript::ProcessCommands300To399
+- แก้ไข Crash AnimationId, AssocGroupId
 - ปลดล็อค AnimObject
 
 ## Launcher Java
