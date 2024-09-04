@@ -863,11 +863,6 @@ uint32_t CPad__CycleWeaponRightJustDown_hook(uintptr_t thiz)
 {
 	if(dwCurPlayerActor && (byteCurPlayer != 0)) return 0;
 
-	// if (!bWeaponClicked) return 0;
-	// else {
-	// 	bWeaponClicked = false;
-	// 	return 1;
-	// }
 	return CPad__CycleWeaponRightJustDown(thiz);
 }
 
@@ -875,12 +870,6 @@ uint32_t(*CPad__CycleWeaponLeftJustDown)(uintptr_t thiz);
 uint32_t CPad__CycleWeaponLeftJustDown_hook(uintptr_t thiz)
 {
 	if(dwCurPlayerActor && (byteCurPlayer != 0)) return 0;
-
-	// if (!bWeaponClicked) return 0;
-	// else {
-	// 	bWeaponClicked = false;
-	// 	return 1;
-	// }
 	
 	return CPad__CycleWeaponLeftJustDown(thiz);
 }
