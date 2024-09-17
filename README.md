@@ -19,6 +19,7 @@ SAMP MOBILE (GTA SA 1.08) ปล่อย Open Source ให้เอาไป�
 - ลดการทำงาน CWorld::Players ไม่ให้หนักหน่วง
 - แก้ไข Crash CRunningScript::ProcessCommands300To399
 - แก้ไข Crash AnimationId, AssocGroupId
+- อัพเดท Player Streaming & Vehicle Streaming
 - ปลดล็อค AnimObject
 
 ## Launcher Java
