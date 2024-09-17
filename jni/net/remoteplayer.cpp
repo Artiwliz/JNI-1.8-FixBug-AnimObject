@@ -150,6 +150,7 @@ void CRemotePlayer::Process()
 	if(IsActive())
 	{
 		bProcessedfsaf++;
+		HandlePlayerPedStreaming();
 		// ---- ONFOOT NETWORK PROCESSING ----
 		if(GetState() == PLAYER_STATE_ONFOOT && 
 			m_byteUpdateFromNetwork == UPDATE_TYPE_ONFOOT && !m_pPlayerPed->IsInVehicle())
@@ -616,6 +617,41 @@ void CRemotePlayer::Remove()
 	{
 		pGame->RemovePlayer(m_pPlayerPed);
 		m_pPlayerPed = nullptr;
+	}
+}
+
+void CRemotePlayer::HandlePlayerPedStreaming()
+{
+	if (!m_pPlayerPed) {
+		return;
+	}
+
+	if (m_pPlayerPed->IsInVehicle())
+	{
+		CVehicle *pVehicle = pNetGame->GetVehiclePool()->GetAt(m_VehicleID);
+
+		if (pVehicle)
+		{
+			if (pVehicle->GetDistanceFromLocalPlayerPed() < 200.0)
+			{
+				m_pPlayerPed->Add();
+			}
+			else
+			{
+				m_pPlayerPed->Remove();
+			}
+		}
+	} 
+	else
+	{
+		if (m_pPlayerPed->GetDistanceFromLocalPlayerPed() < 200.0)
+		{
+			m_pPlayerPed->Add();
+		}
+		else
+		{
+			m_pPlayerPed->Remove();
+		}
 	}
 }
 
